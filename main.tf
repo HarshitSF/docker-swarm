@@ -1,3 +1,29 @@
+resource "docker_service" "mysql-service" {
+ name = "${var.mysql_network_alias}"
+
+ task_spec {
+   container_spec {
+     image = "${docker_image.mysql_image.name}"
+
+     env {
+       MYSQL_ROOT_PASSWORD = "${var.mysql_root_password}"
+     }
+
+     mounts = [
+       {
+         target = "/var/lib/mysql"
+         source = "${docker_volume.mysql_data_volume.name}"
+         type   = "volume"
+       }
+     ]
+   }
+   networks = ["${docker_network.private_overlay_network.name}"]
+ }
+}
+
+
+
+
 resource "docker_volume" "mysql_data_volume" {
   name = "mysql_data"
 }resource "docker_service" "ghost-service" {
@@ -21,32 +47,9 @@ resource "docker_volume" "mysql_data_volume" {
  endpoint_spec {
    ports {
      target_port    = "2368"
-     published_port = "${var.ext_port}"
+     published_port = "${var.ghost_ext_port}"
    }
  }
 }
 
-
-resource "docker_service" "mysql-service" {
- name = "${var.mysql_network_alias}"
-
- task_spec {
-   container_spec {
-     image = "${docker_image.mysql_image.name}"
-
-     env {
-       MYSQL_ROOT_PASSWORD = "${var.mysql_root_password}"
-     }
-
-     mounts = [
-       {
-         target = "/var/lib/mysql"
-         source = "${docker_volume.mysql_data_volume.name}"
-         type   = "volume"
-       }
-     ]
-   }
-   networks = ["${docker_network.private_overlay_network.name}"]
- }
-}
 
