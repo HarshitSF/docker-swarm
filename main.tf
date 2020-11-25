@@ -23,10 +23,7 @@ resource "docker_service" "mysql-service" {
 
 
 
-
-resource "docker_volume" "mysql_data_volume" {
-  name = "mysql_data"
-}resource "docker_service" "ghost-service" {
+resource "docker_service" "ghost-service" {
  name = "ghost"
 
  task_spec {
